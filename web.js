@@ -2,9 +2,7 @@ var express = require("express")
 	, stylus = require('stylus')
   	, nib = require('nib');
   	
-var app = express();
-var port = 3700;
- 
+var app = express(); 
  
 function compile(str, path) {
   return stylus(str)
@@ -32,10 +30,13 @@ app.get("/", function(req, res){
     res.render("page");
 });
 
- 
+
+var port = process.env.PORT || 5000; 
+
 //app.listen(port);
 var io = require('socket.io').listen(app.listen(port));
 console.log("Listening on port " + port);
+console.log('### Environment is: ' + process.env.NODE_ENV);
 
 
 io.sockets.on('connection', function (socket) {
