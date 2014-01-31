@@ -31,16 +31,17 @@ app.get("/", function(req, res){
 });
 
 
-var port = process.env.PORT || 5000; 
+var port = process.env.PORT || 3700;
 
 //app.listen(port);
 var io = require('socket.io').listen(app.listen(port));
-console.log("Listening on port " + port);
+console.log("### Listening on port " + port);
 console.log('### Environment is: ' + process.env.NODE_ENV);
 
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('message', { message: 'welcome to the chat' });
+	// can send user-id this way etc.
+    //socket.emit('message', { message: '<span style="color: grey;">Welcome to Interlude! Chat with other people surfing this page right now!</span>' });
     socket.on('send', function (data) {
         io.sockets.emit('message', data);
     });

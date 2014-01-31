@@ -1,6 +1,14 @@
 /*
  *	Internal functions
  */
+var SERVER_LOCATION = "http://localhost:5000";
+var TAB_POSITION = "tabTop";
+// These are set in the function 'insertInitialHtml'
+var chatBoxContainer,
+	chatBoxTab,
+	chatBoxRead,
+	chatBoxWrite,
+	chatBoxClose;
  
 // This function will work cross-browser for loading scripts asynchronously
 function loadScript(src, callback) {
@@ -46,118 +54,159 @@ function loadStyle(src, callback) {
 
 
 // NOTE: consider using $.getScript(src, callback) as soon as we have jquery if that is more robust
-// uses loadScript to load styles, socket.io, jquery and jquery-ui
+// uses loadScript to load styles, socket.io, jquery and jquery-ui, jquery-ui style
 function loadStylesSocketAndJquery(next) {
 	// load styles
-	loadStyle("http://localhost:3700/index.css", function() {
+	loadStyle(SERVER_LOCATION + "/index.css", function() {
 		// load socket.io
-		loadScript("http://localhost:3700/socket.io/socket.io.js", function() {
+		loadScript(SERVER_LOCATION + "/socket.io/socket.io.js", function() {
 			// then load jquery
 			loadScript("//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", function() {
 				// then load jquery-ui
 				loadScript("//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js", function() {
-					next();
-			
-					//var socket = io.connect('http://localhost:3700');
+					loadStyle("//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css", function() {
+						next();
+					});
 				});
 			});
 		});
 	});
 }
 
+
+
 // This adds the chatbox to the page
 function insertInitialHtml(next) {
-	$('<div/>', {
-		id: 		'interlude-chatBox' //,
-		//style:		'position: relative;width: 400px; height: 200px; border: 1px solid black; border-right: none; position: fixed; left: 0; top: 50%; margin-top: -100px;'
-	}).appendTo('body');
+
+	// First insert the container
+	$('<div/>', { id: 'interlude-chatBox-container' }).appendTo('body');
+	// Add the tab
+	$('<div/>', { 
+		id: 	'interlude-chatBox-'+TAB_POSITION,
+		// Title with logo
+		html:	'<span><img style="width: 16px; height: 16px;" src="'+SERVER_LOCATION+'/images/interlude_logo.png" /> Interlude Chat</span> <span id="interlude-chatBox-close">X</span>'
+	}).appendTo('#interlude-chatBox-container');
 	
-	var chatBox = $('#interlude-chatBox');
-	chatBox.draggable();
-	//-webkit-transform: rotate(-90deg); 
-	// add the tab
-	$('<div/>', {
-		id:			'interlude-chatBox-tab' //,
-		//style:		'right: -40px; top: -1px; padding: 0px 5px; text-align: center; opacity: 0.7; border-top-right-radius: 6px; border-bottom-right-radius: 6px; cursor:pointer; height: 200px; width: 30px; background-color: #C9FFE5; position: absolute; border: 1px solid black;'
-	}).appendTo('#interlude-chatBox');
+	// Add the read section
+	$('<div/>', { 
+		id: 	'interlude-chatBox-read',
+		html:	'<span style="color: grey;">Welcome to Interlude! Chat with other people surfing this page right now!</span>'
+	}).appendTo('#interlude-chatBox-container');
+	// Add the write section
+	$('<textarea id="interlude-chatBox-write" />').appendTo('#interlude-chatBox-container');
 	
-	var chatBoxTab = $('#interlude-chatBox-tab');
-	chatBoxTab.append('<div id="interlude-chatBox-tab-title", name="title">Interlude Chat</div>');
 	
-	/*
-	chatBoxTab.append('<div id="#interlude-chatBox-tab-title", name="title">Interlude Chat</div>');
-	var charBoxTabTitle = chatBoxTab.find('[name="title"]');
-	charBoxTabTitle.css('height','30px');
-	charBoxTabTitle.css('width','200px');
-	charBoxTabTitle.css('position','absolute');
-	charBoxTabTitle.css('top','86px');
-	charBoxTabTitle.css('left','-74px');
-	charBoxTabTitle.css('position','absolute');
-	charBoxTabTitle.css('-webkit-transform','rotate(-90deg)');
-	*/
+	// store j-objects as variables
+	chatBoxContainer = $('#interlude-chatBox-container');
+	chatBoxTab = $('#interlude-chatBox-'+TAB_POSITION);
+	chatBoxRead = $('#interlude-chatBox-read');
+	chatBoxWrite = $('#interlude-chatBox-write');
+	chatBoxClose = $('#interlude-chatBox-close');
 	
+	// make container draggable and resizable
+	chatBoxContainer.draggable();
+	chatBoxContainer.resizable();
+	
+	// make input field inputable
+	chatBoxWrite.attr('contenteditable', 'true');
+	
+	// bind a couple things
+	// allow viewer to delete chatbox
+	chatBoxClose.click(function(e) { e.preventDefault(); $('#interlude-chatBox-container').remove(); });
 	chatBoxTab.click(function(e) {
 		e.preventDefault();
-		var toggleWidth = chatBox.width() == 400 ? "0px" : "400px";
-        chatBox.animate({ width: toggleWidth });
+		
+		var l = $(window).height() - (chatBoxContainer.height() + chatBoxContainer.position().top);
+		// Case bottom
+		if (l < 0) {
+			// make sure these guys visible
+			chatBoxRead.slideDown();
+			chatBoxWrite.slideDown();
+			
+			// top and bottom shouldn't contradict each other
+			// (dragging may set top)
+			chatBoxContainer.css('top', '');
+			chatBoxContainer.animate({ bottom: '0px' });
+		// we'll stick it back down
+		} else if (l < 30) {
+			// if dragged to bottom while closed, need to show these guys
+			chatBoxRead.slideDown();
+			chatBoxWrite.slideDown();
+			
+			chatBoxContainer.css('top', '');
+			chatBoxContainer.animate({ bottom: '-230px' });
+		} else {
+			chatBoxRead.slideToggle();
+			chatBoxWrite.slideToggle();
+		}
+	
+			
+		// if container is still stuck to bottom, let's just slide it down
+		/*
+		var containerBottom = chatBoxContainer.css('bottom');
+		if (containerBottom=='-230px') {
+			console.log('case1');
+			chatBoxContainer.animate({ bottom: '0px' });
+		} else if (containerBottom=='0px') {
+			console.log('case2');
+			chatBoxContainer.animate({ bottom: '-230px' });
+		
+		// case not at bottom
+		} else {
+			console.log('case3');
+			chatBoxRead.slideToggle();
+			chatBoxWrite.slideToggle();
+		}*/
 	});
+	
+	next();
 }
 
+
+var messages = [];
+function initializeSocket(next) {
+	// we only bind sockets now, so save anything to do
+	// with that for here onwards
+	var socket = io.connect(SERVER_LOCATION);
+	
+	socket.on('message', function (data) {
+		if(data.message) {
+			messages.push(data.message);
+			var html = '';
+			for(var i=0; i<messages.length; i++) {
+				html += messages[i] + '<br />';
+			}
+			
+			//$('#interlude-chatBox-read').html(html);
+			chatBoxRead.html(html);
+		} else {
+			console.log("There is a problem:", data);
+		}
+	});
+	
+	// bind the write field
+	chatBoxWrite.keyup(function(e) {
+        if(e.keyCode == 13) { // enter
+        	var text = chatBoxWrite.val();
+            socket.emit('send', { message: text });
+            // clear write field
+            chatBoxWrite.val('');
+        }
+    });
+			
+			
+	next();
+}
 
 /*
  *	Window on load
  */
 window.onload = function() {
-
 	loadStylesSocketAndJquery(function() {
 		insertInitialHtml(function() {
+			initializeSocket(function() {
 			
+			});
 		});
 	});
-	
-	
- 	
- 	
- 	/*
- 	var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js";
-
-	// add socket.io
-   	s.src = "http://localhost:3700/socket.io/socket.io.js";
-    // Use any selector
-    document.getElementsByTagName('head')[0].appendChild(s);
-    //$("head").append(s);
-    
-	 var socket = io.connect('http://localhost:3700');*/
-	 /*
-	 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-	 */
-	 	
- 	/*
-    var messages = [];
-    var socket = io.connect('http://localhost:3700');
-    var field = document.getElementById("field");
-    var sendButton = document.getElementById("send");
-    var content = document.getElementById("content");
- 
-    socket.on('message', function (data) {
-        if(data.message) {
-            messages.push(data.message);
-            var html = '';
-            for(var i=0; i<messages.length; i++) {
-                html += messages[i] + '<br />';
-            }
-            content.innerHTML = html;
-        } else {
-            console.log("There is a problem:", data);
-        }
-    });
- 
-    sendButton.onclick = function() {
-        var text = field.value;
-        socket.emit('send', { message: text });
-    };
- 	*/
 }
