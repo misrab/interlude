@@ -1,0 +1,17 @@
+.plan {
+  border: 1px solid #808080;
+}
+.plan .planTitle {
+  color: #21abcd;
+  background-color: #f0ffff;
+  font-size: 2em;
+  padding: 10px 0;
+}
+.plan .planFeatures {
+  background-color: #89cff0;
+  font-size: 1.25em;
+  padding: 10px 0;
+}
+.plan.active .planTitle {
+  background-color: #90ee90;
+}

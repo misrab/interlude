@@ -1,0 +1,136 @@
+@import "nib"
+@import "./variables"
+
+/*
+ * Grab a custom font from Google
+ */
+@import url('http://fonts.googleapis.com/css?family=Lato')
+
+
+html, body
+	height 100%
+body
+	box-sizing border-box
+	font-family 'Lato'
+	background-color #F5F5DC
+	/*
+	background-color signature_color
+	background linear-gradient(top, white, signature_color)
+	background-repeat no-repeat
+	background-attachment fixed */
+.container
+	padding-top 60px  /* for navbar */
+	min-height 800px
+	position relative
+	overflow auto
+	padding-bottom 65px
+	
+.footer
+	margin-top 60px
+	padding-top 15px
+	border-top 1px dotted grey
+	
+	
+/* navbar, even if not on all pages */
+.navbar
+	padding 0 10%
+	padding-bottom 5px
+	box-shadow 0 0 5px black
+.loader_wrapper
+	border-radius 4px
+	top 0
+	left 0
+	display none
+	position absolute
+	z-index 10
+	width 100%
+	min-height 100%
+	background white
+	opacity 0.75	
+.loader_image
+	width 36px
+	height 36px
+	position absolute
+	top 40%
+	left 50%
+	margin-left -18px
+	margin-top -18px
+	z-index 4002
+
+.navbar a:hover
+	text-shadow 0 0 20px white
+	
+
+.modal_group
+	position relative
+	width 100%
+	margin 0 auto
+	text-align center
+.modal_form_control
+	width 70%
+	margin 5px auto
+
+.clickable
+	cursor pointer
+
+.grey
+	color grey
+.white
+	color white
+.black
+	color black
+
+.inline
+	display inline
+.inline_block
+	display inline-block
+.block
+	display block
+.my_hide
+	display none
+	
+.relative
+	position relative
+.absolute
+	position absolute
+
+.font1
+	font-size 1em
+.font1-25
+	font-size 1.25em
+.font1-5
+	font-size 1.5em
+.font1-75
+	font-size 1.75em
+.font2
+	font-size 2em
+
+.inline_circle
+	text-align center
+	padding 0.5em 0
+	font-size 1em
+	height 32px
+	width 32px
+	background-color black
+	color white
+	border-radius 32px
+	
+.top
+	vertical-align top
+.bottom
+	vertical-align bottom
+	
+.small_space_top
+	margin-top 5px
+.medium_space_top
+	margin-top 15px
+.big_space_top
+	margin-top 30px
+	
+.full_width
+	width 100%
+.half_width
+	width 50%
+.left_right_margin
+	margin-left 10px
+	margin-right 10px

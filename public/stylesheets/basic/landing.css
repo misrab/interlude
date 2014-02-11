@@ -1,0 +1,28 @@
+.container {
+  padding-top: 0;
+/* overwrite generic style */
+}
+#logo {
+  width: 50%;
+  max-width: 50%;
+  max-height: 150px;
+}
+#tryit {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#landing_carousel .carousel-inner .item {
+  padding-top: 25px;
+  min-height: 400px;
+  text-align: center;
+}
+#landing_carousel .carousel-control {
+  background-image: none;
+}
+#landing_carousel .carousel-indicators li {
+  border: 1px solid #808080;
+}
+#landing_carousel .carousel-indicators li.active {
+  background-color: #8db600;
+}

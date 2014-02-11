@@ -1,0 +1,30 @@
+#landing_carousel.carousel.slide(data-ride='carousel')
+	//- indicators
+	ol.carousel-indicators
+		li.active(data-target='#landing_carousel', data-slide-to='0')
+		li(data-target='#landing_carousel', data-slide-to='1')
+		li(data-target='#landing_carousel', data-slide-to='2')
+		li(data-target='#landing_carousel', data-slide-to='3')
+		
+	//- slide wrapper
+	.carousel-inner
+		.item.active
+			h3 Enhance your website by letting users on the same page chat
+			center.big_space_top.relative
+				img(style='height: 200px;', src='/images/landing_carousel/chat.png')
+		.item
+			h3 Minimalist design for minimum distraction from your content
+			h3 Closeable, Draggable, Resizable
+			img(style='height: 50px; width: 50px; position: absolute; left:50%; margin-left: -25px; top: 50%; margin-top: -25px;', src='/images/landing_carousel/southwest_arrow.png')
+		.item
+			h3 Monitor and respond to conversations from an easy-to-use centralized dashboard
+			p [[ add actual screenshot here ]]
+		.item
+			h3 Get access to great analytics on what your users are saying
+			img(style='width: 200px; height: 200px; position: absolute; left:50%;top:50%;margin-top:-100px;margin-left:-100px;', src='/images/landing_carousel/analytics.png')
+			
+	//- controls
+	a.left.carousel-control(href='#landing_carousel', data-slide='prev')
+		span.glyphicon.glyphicon-chevron-left
+	a.right.carousel-control(href='#landing_carousel', data-slide='next')
+		span.glyphicon.glyphicon-chevron-right

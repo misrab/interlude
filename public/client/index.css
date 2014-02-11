@@ -6,6 +6,7 @@
   box-sizing: border-box;
 }
 #interlude-chatBox-container {
+  z-index: 9999;
   height: 260px;
   width: 400px;
   position: fixed !important;

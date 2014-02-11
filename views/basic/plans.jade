@@ -1,0 +1,70 @@
+extends ../shared/generic_layout
+
+block javascripts
+	script(type='text/javascript', src='/javascripts/basic/plans.js')
+
+block stylesheets
+	link(rel='stylesheet', href='/stylesheets/basic/plans.css')
+
+block content
+	include ../shared/navbar_partial
+	.row
+		.col-sm-12.text-center
+			h3 Plans
+	
+	
+	.row.text-center
+		.col-sm-4
+			.font1-25(style='font-weight: bold; color: orange;') FREE
+			
+		.col-sm-4
+			.grey $20/month
+		.col-sm-4
+			.grey $99/month
+		
+	.row.text-center
+		.col-sm-4
+			.plan.active
+				.planTitle Starter
+				.planFeatures
+					.black.medium_space_top Unlimited user chat
+					.black.medium_space_top Live monitoring
+					.grey.medium_space_top Priority responding to users
+					.grey.medium_space_top Detailed analytics
+
+		//- &ltscript type="text/javascript" src="http://localhost:5000/client/index.js"&gt&lt/script&gt
+		.col-sm-4
+			.plan
+				.planTitle Premium
+				.planFeatures
+					.black.medium_space_top Unlimited user chat
+					.black.medium_space_top Live monitoring
+					.black.medium_space_top Priority responding to users
+					.grey.medium_space_top Detailed analytics
+		
+		.col-sm-4
+			.plan
+				.planTitle Enterprise
+				.planFeatures
+					.black.medium_space_top Unlimited user chat
+					.black.medium_space_top Live monitoring
+					.black.medium_space_top Priority responding to users
+					.black.medium_space_top Detailed analytics
+					
+	.row.text-center
+		.col-sm-12.bottom
+			.font2.big_space_top
+				.bottom.inline_block(style='margin-bottom: 0;') Select a plan and 
+				button.btn.btn-success.left_right_margin(form='signupForm') Get started!
+				
+	.row.text-center
+		.col-sm-12
+			form#signupForm.relative
+				.loader_wrapper
+					img(class='loader_image', src='/images/generic/loader.gif')
+				input(type='hidden', name='plan', value='0')
+				input.form-control(maxlength='70', style='width: 40%; margin: 10px auto;', name='email', type='email', required, placeholder='Email')
+				input.form-control(maxlength='70', style='width: 40%; margin: 10px auto;', name='password', type='password', required, placeholder='Desired password')
+				
+				.alert.alert-danger.my_hide(style='width: 40%; margin: 10px auto;') Sorry, something went wrong
+				.alert.alert-success.my_hide(style='width: 40%; margin: 10px auto;') Congratulations!

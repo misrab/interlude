@@ -61,7 +61,7 @@ function compile(str, path) {
     .set('filename', path)
     .use(nib())
 }
-app.set('views', __dirname + '/tpl');
+app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.logger('dev'));
 app.use(stylus.middleware(
@@ -70,6 +70,7 @@ app.use(stylus.middleware(
   }
 ));
 app.use(express.static(__dirname + '/public'));
+app.use(express.favicon(__dirname + '/public/images/favicon.png'));
  
  
 // Passport and Sessions
@@ -109,6 +110,8 @@ clearDB(function(err) {
 		console.log ('### Succeeded connecting to: ' + db_pg.url + ' ###');
 		
 		var io = require('socket.io').listen(app.listen(port));
+		io.set('log level', 1); // reduce logging
+		
 		console.log("### Listening on port " + port);
 		console.log('### Environment is: ' + process.env.NODE_ENV);
 		
@@ -117,27 +120,10 @@ clearDB(function(err) {
 			// expect message and url
 			socket.on('send', function(data) {
 				var url = data.url;
-				var msg = data.message;
-				io.sockets.emit('message-'+url, data);
+				var channel = data.channel;
+				//var msg = data.message;
+				io.sockets.emit('message-'+url+'-'+channel, data);
 			});
 		});
 	});
 });
-
-
-/*
-var io = require('socket.io').listen(app.listen(port));
-console.log("### Listening on port " + port);
-console.log('### Environment is: ' + process.env.NODE_ENV);
-
-
-io.sockets.on('connection', function (socket) {
-	// note: socket vs io.sockets    
-    // expect message and url
-    socket.on('send', function(data) {
-    	var url = data.url;
-    	var msg = data.message;
-    	io.sockets.emit('message-'+url, data);
-    });
-});
-*/

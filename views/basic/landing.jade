@@ -1,0 +1,26 @@
+extends ../shared/generic_layout
+
+block javascripts
+	script(type='text/javascript', src='/javascripts/basic/landing.js')
+
+block stylesheets
+	link(rel='stylesheet', href='/stylesheets/basic/landing.css')
+
+block content
+	.row
+		.col-sm-12
+			include ../shared/login_partial
+	.row#row1
+		.col-sm-12.bottom
+			img#logo.half_width.inline_block.bottom(src='/images/full_logo.png')
+			.half_width.inline_block.bottom
+				h1(style='margin-bottom: 0;')
+					| One line of javascript,
+					br
+					| like-page chat for your users
+	.row#row2
+		.col-sm-12.text-center.big_space_top
+			a.btn.btn-warning(href='/plans') Try it out - it's free!
+	.row
+		.col-sm-12
+			include ./landing_carousel_partial

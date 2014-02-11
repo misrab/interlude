@@ -16,6 +16,11 @@ var interludeInternalObject = {
 	chatBoxWrite:			null,
 	chatBoxClose:			null,
 	
+	socket:					null,
+	url:					'',
+	//channel:				'anonymous',
+	
+	userstring:				'',
 	messages:				[],
 	usernames: 				['Apple','Orange','Pear','Guava','Apricot','Plum'],
 	
@@ -141,6 +146,61 @@ var interludeInternalObject = {
 		}
 	},
 	
+	changeChatBoxRadio: function(e) {	
+	
+		//e.preventDefault(); we want default! i.e. radio selection
+		// Case 1: Anonymous
+		if ($(this).val() == 'anonymous') {
+			// remove other listeners
+			interludeInternalObject.socket.removeAllListeners('message-'+interludeInternalObject.url+'-login');
+			// make sure this listener on
+			interludeInternalObject.socketListen('anonymous');
+			
+			// make sure writing is enabled, don't double-bind
+			interludeInternalObject.chatBoxWrite.unbind('keyup');
+			interludeInternalObject.chatBoxWrite.keyup(interludeInternalObject.keyupChatBoxWriteAnonymous);
+			interludeInternalObject.chatBoxWrite.removeAttr('readonly');
+			
+			// listen to anonymous
+		} else {
+			// remove other listeners
+			interludeInternalObject.socket.removeAllListeners('message-'+interludeInternalObject.url+'-anonymous');
+			// make sure this listener on
+			interludeInternalObject.socketListen('login');
+
+			// disable submission first
+			interludeInternalObject.chatBoxWrite.unbind('keyup');
+			interludeInternalObject.chatBoxWrite.attr('readonly', 'readonly');
+		
+			// fb login
+			
+			// listen to login-ed chat
+		}
+	},
+	
+	keyupChatBoxWriteAnonymous: function(e) {
+		interludeInternalObject.keyupChatBoxWrite(e, 'anonymous');
+	},
+	keyupChatBoxWriteLogin: function(e) {
+		interludeInternalObject.keyupChatBoxWrite(e, 'login');
+	},
+	
+	
+	// slave to keyupChatBoxWrite[Anonymous|Login]
+	keyupChatBoxWrite: function(e, channel) {
+		if(e.keyCode == 13) { // enter
+			var text = interludeInternalObject.chatBoxWrite.val();
+			if (!text || text==false) return;
+			
+			interludeInternalObject.socket.emit('send', { message: interludeInternalObject.userstring + text, url: interludeInternalObject.url, channel: channel });
+			// clear write field
+			interludeInternalObject.chatBoxWrite.val('');
+			// scroll read field to bottom
+			interludeInternalObject.chatBoxRead.scrollTop(interludeInternalObject.chatBoxRead.prop("scrollHeight"));
+		}
+	},
+	
+	// binds except for writing, which waits for socket.io
 	bindChatbox: function() {
 		// make container draggable and resizable
 		interludeInternalObject.chatBoxContainer.draggable();
@@ -154,6 +214,9 @@ var interludeInternalObject = {
 		
 		// tab opening and closing of chatbox
 		interludeInternalObject.chatBoxTab.click(interludeInternalObject.clickChatBoxTab);
+		
+		// radio selection anonymous vs logged in
+		$('input[type="radio"][name="group1"]', interludeInternalObject.chatBoxContainer).change(interludeInternalObject.changeChatBoxRadio);
 	},
 
 	// This adds the chatbox to the page
@@ -172,7 +235,7 @@ var interludeInternalObject = {
 		// Add the logistics section
 		$('<div/>', { 
 			id: 	'interlude-chatBox-logistics',
-			html:	'Anonymous. fsf.sdf sdf...'
+			html:	'<input style="margin: 0 10px;" name="group1" checked value="anonymous" type="radio">Anonymous</input><input style="margin: 0 10px;" value="login" name="group1" type="radio">Login with Facebook</input>'
 		}).appendTo('#interlude-chatBox-container');
 	
 		// Add the read section
@@ -199,23 +262,10 @@ var interludeInternalObject = {
 		
 		next();
 	},
-
-	initializeSocket:	function(next) {
-		// we only bind sockets now, so save anything to do
-		// with that for here onwards
-		var socket = io.connect(interludeInternalObject.SERVER_LOCATION);
 	
-		// get the url - all chat for this url will be on this url
-		// ! may want to make this more secure
-		var url = $(location).attr('href'); //window.location.pathname;
-	
-		// generate a random-ish username here
-		var username = interludeInternalObject.usernames[interludeInternalObject.getRandomInt(0, interludeInternalObject.usernames.length-1)] + interludeInternalObject.getRandomInt (0, 9999);
-		var userstring = '<span style="font-weight: bold; color: '+interludeInternalObject.get_random_color()+';">'+username+': </span>';
-	
-		
-		// now listen to messages for this url
-		socket.on('message-'+url, function (data) {
+	// listens for socket on given channel: 'anonymous' or 'login'
+	socketListen:	function(channel) {
+		interludeInternalObject.socket.on('message-'+interludeInternalObject.url+'-'+channel, function (data) {
 			if (data.message) {
 				interludeInternalObject.messages.push(data.message);
 				var html = '';
@@ -228,20 +278,28 @@ var interludeInternalObject = {
 				console.log("There is a problem:", data);
 			}
 		});
+	},
+
+	initializeSocket:	function(next) {
+		// we only bind sockets now, so save anything to do
+		// with that for here onwards
+		interludeInternalObject.socket = io.connect(interludeInternalObject.SERVER_LOCATION);
+			
+		// get the url - all chat for this url will be on this url
+		// ! may want to make this more secure
+		interludeInternalObject.url = $(location).attr('href'); //window.location.pathname;
 	
+		// generate a random-ish username here
+		var username = interludeInternalObject.usernames[interludeInternalObject.getRandomInt(0, interludeInternalObject.usernames.length-1)] + interludeInternalObject.getRandomInt (0, 9999);
+		interludeInternalObject.userstring = '<span style="font-weight: bold; color: '+interludeInternalObject.get_random_color()+';">'+username+': </span>';
+	
+		
+		// now listen to messages for this url
+		interludeInternalObject.socketListen('anonymous');
+		
 		// bind the write field
 		// send messages to list for this url
-		interludeInternalObject.chatBoxWrite.keyup(function(e) {
-			if(e.keyCode == 13) { // enter
-				var text = interludeInternalObject.chatBoxWrite.val();
-				if (!text || text==false) return;
-				socket.emit('send', { message: userstring + text, url: url });
-				// clear write field
-				interludeInternalObject.chatBoxWrite.val('');
-				// scroll read field to bottom
-				interludeInternalObject.chatBoxRead.scrollTop(interludeInternalObject.chatBoxRead.prop("scrollHeight"));
-			}
-		});
+		interludeInternalObject.chatBoxWrite.keyup(interludeInternalObject.keyupChatBoxWriteAnonymous);
 
 		next();
 	}

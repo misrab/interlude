@@ -1,0 +1,33 @@
+@import "nib"
+@import "../variables"
+
+
+.container
+	padding-top 0 /* overwrite generic style */
+
+#logo
+	width 50%
+	max-width 50%
+	max-height 150px
+	
+#tryit
+	position absolute
+	top 0
+	right 0
+
+#landing_carousel
+	.carousel-inner
+		.item
+			padding-top 25px
+			min-height 400px
+			text-align center
+			
+	
+	.carousel-control
+		background-image none
+		
+	.carousel-indicators
+		li
+			border 1px solid grey
+		li.active
+			background-color signature_color
