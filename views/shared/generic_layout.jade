@@ -38,9 +38,15 @@ html
 		//- Timeago for human readable time
 		//- script(type='text/javascript', src='/javascripts/generic/jquery.timeago.js')
 		
-		//- chat application
-		script(type='text/javascript', src="http://localhost:5000/client/index.js")
-	
-		//-script(data-main='/javascripts/generic/index', src='/javascripts/generic/require.js')
+		//- generic js
+		script(type='text/javascript', src='/javascripts/generic.js')
+		
+		//- chat application		
+		script(type='text/javascript').
+			var cb = function(o) { o.masterFunction('lala', null); };
+			var s, r, t; r = false; s = document.createElement('script'); s.type = 'text/javascript';
+			s.src = "//localhost:5000/client/index.js"; s.onload = s.onreadystatechange = function() {
+			if ( !r && (!this.readyState || this.readyState == 'complete') ) { r = true; cb(interludeInternalObject); } };
+			document.getElementsByTagName('head')[0].appendChild(s);
 		
 		block javascripts

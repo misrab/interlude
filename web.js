@@ -101,8 +101,8 @@ var port = process.env.PORT || 3700;
 
 
 var clearDB = null;
-clearDB = function(next) { next(null); };
-//clearDB = function(next) { db_pg.sequelize.drop().complete(next); };
+//clearDB = function(next) { next(null); };
+clearDB = function(next) { db_pg.sequelize.drop().complete(next); };
 
 clearDB(function(err) {
 	db_pg.sequelize.sync().complete(function(err) {
@@ -121,8 +121,11 @@ clearDB(function(err) {
 			socket.on('send', function(data) {
 				var url = data.url;
 				var channel = data.channel;
+				
+				// don't want to send unnecessary data
+				var newData = { message: data.message };
 				//var msg = data.message;
-				io.sockets.emit('message-'+url+'-'+channel, data);
+				io.sockets.emit('message-'+url+'-'+channel, newData);
 			});
 		});
 	});

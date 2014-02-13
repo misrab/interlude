@@ -7,9 +7,21 @@ block stylesheets
 	link(rel='stylesheet', href='/stylesheets/basic/landing.css')
 
 block content
-	.row
-		.col-sm-12
-			include ../shared/login_partial
+	.row#row0
+		.col-sm-8.col-sm-offset-4.text-right
+			form#loginForm(action='/login', style='margin-left: 10px;')
+				.loader_wrapper
+					img(class='loader_image', src='/images/generic/loader.gif')
+				input.form-control.small_space_top(required, maxlength='50', type='email', name='email', placeholder='Email')
+				input.form-control.small_space_top(required, maxlength='50', type='password', name='password', placeholder='Password')
+				input.btn.btn-success.form-control.small_space_top(type='submit', value='Log in')
+
+				.alert.alert-danger.small_space_top.text-center.my_hide Sorry, there was an issue
+			
+			//
+				a(href='#')#loginButton.medium_space_top.pull-right Login
+				#loginWrapper
+					include ../shared/login_partial
 	.row#row1
 		.col-sm-12.bottom
 			img#logo.half_width.inline_block.bottom(src='/images/full_logo.png')

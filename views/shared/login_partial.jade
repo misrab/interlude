@@ -1,0 +1,8 @@
+form#loginForm(action='/login', style='margin-left: 10px;')
+	.loader_wrapper
+		img(class='loader_image', src='/images/generic/loader.gif')
+	input.form-control.small_space_top(required, maxlength='50', type='email', name='email', placeholder='Email')
+	input.form-control.small_space_top(required, maxlength='50', type='password', name='password', placeholder='Password')
+	input.btn.btn-success.form-control.small_space_top(type='submit', value='Log in')
+
+	.alert.alert-danger.small_space_top.text-center.my_hide Sorry, there was an issue

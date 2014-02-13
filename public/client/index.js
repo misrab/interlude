@@ -6,8 +6,9 @@ var interludeInternalObject = {
 	/*
 	 *	 Internal Variables
 	 */
-	SERVER_LOCATION: 		"http://localhost:5000",
+	SERVER_LOCATION: 		"//localhost:5000",
 	TAB_POSITION: 			"tabTop",
+	
 	// These are set in the function 'insertInitialHtml'
 	chatBoxContainer:		null,
 	chatBoxTab:				null,
@@ -16,9 +17,9 @@ var interludeInternalObject = {
 	chatBoxWrite:			null,
 	chatBoxClose:			null,
 	
+	secret:					null,
 	socket:					null,
 	url:					'',
-	//channel:				'anonymous',
 	
 	userstring:				'',
 	messages:				[],
@@ -47,9 +48,7 @@ var interludeInternalObject = {
 	
 	// This function will work cross-browser for loading scripts asynchronously
 	loadScript:	function(src, callback) {
-	  var s,
-		  r,
-		  t;
+	  var s, r, t;
 	  r = false;
 	  s = document.createElement('script');
 	  s.type = 'text/javascript';
@@ -192,7 +191,7 @@ var interludeInternalObject = {
 			var text = interludeInternalObject.chatBoxWrite.val();
 			if (!text || text==false) return;
 			
-			interludeInternalObject.socket.emit('send', { message: interludeInternalObject.userstring + text, url: interludeInternalObject.url, channel: channel });
+			interludeInternalObject.socket.emit('send', { message: interludeInternalObject.userstring + text, url: interludeInternalObject.url, channel: channel, secret: interludeInternalObject.secret });
 			// clear write field
 			interludeInternalObject.chatBoxWrite.val('');
 			// scroll read field to bottom
@@ -265,7 +264,8 @@ var interludeInternalObject = {
 	
 	// listens for socket on given channel: 'anonymous' or 'login'
 	socketListen:	function(channel) {
-		interludeInternalObject.socket.on('message-'+interludeInternalObject.url+'-'+channel, function (data) {
+		interludeInternalObject.socket.on('message-'+interludeInternalObject.url+'-'+channel, function (data) {		
+		
 			if (data.message) {
 				interludeInternalObject.messages.push(data.message);
 				var html = '';
@@ -292,16 +292,31 @@ var interludeInternalObject = {
 		// generate a random-ish username here
 		var username = interludeInternalObject.usernames[interludeInternalObject.getRandomInt(0, interludeInternalObject.usernames.length-1)] + interludeInternalObject.getRandomInt (0, 9999);
 		interludeInternalObject.userstring = '<span style="font-weight: bold; color: '+interludeInternalObject.get_random_color()+';">'+username+': </span>';
-	
+		
 		
 		// now listen to messages for this url
 		interludeInternalObject.socketListen('anonymous');
 		
 		// bind the write field
 		// send messages to list for this url
+		// ! this will use the interludeInternalObject.secret
 		interludeInternalObject.chatBoxWrite.keyup(interludeInternalObject.keyupChatBoxWriteAnonymous);
 
 		next();
+	},
+	
+	masterFunction: function(code, cb) {
+		// set the code global
+		interludeInternalObject.secret = code;
+		
+		
+		interludeInternalObject.loadStylesSocketAndJquery(function() {
+			interludeInternalObject.insertInitialHtml(function() {
+				interludeInternalObject.initializeSocket(function() {
+					if (cb) cb(); // callback from masterFunction if any
+				});
+			});
+		});
 	}
 }
 // end of interludeInternalObject
@@ -313,13 +328,7 @@ var interludeInternalObject = {
  *	Window on load
  */
  
- 
+/*
 window.onload = function() {
-	interludeInternalObject.loadStylesSocketAndJquery(function() {
-		interludeInternalObject.insertInitialHtml(function() {
-			interludeInternalObject.initializeSocket(function() {
-			
-			});
-		});
-	});
-}
+	
+}*/

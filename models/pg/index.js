@@ -30,7 +30,7 @@ var pg = {
 	Sequelize: 				Sequelize,
 	sequelize: 				sequelize,
 	
-	User: 					sequelize.import(__dirname + '/user')
+	Publisher: 				sequelize.import(__dirname + '/publisher')
 }
 
 /*
