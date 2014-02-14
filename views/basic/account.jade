@@ -1,0 +1,51 @@
+extends ../shared/generic_layout
+
+block javascripts
+	script(type='text/javascript', src='/javascripts/basic/account.js')
+
+block stylesheets
+	//- link(rel='stylesheet', href='/stylesheets/basic/plans.css')
+
+block content
+	include ../shared/navbar_partial
+	.row
+		.col-sm-12.text-center
+			h3 Account
+			
+			a#toggleScript.pull-right(href='#', style='margin-right: 5px;') Hide
+			#script.alert.alert-success
+				h4 Insert the following script into your page(s) for instant chat for your users:
+				p.black !{locals.script}
+				
+	.row
+		.col-sm-4
+		.col-sm-4.text-center.relative
+			.loader_wrapper
+				img(class='loader_image', src='/images/generic/loader.gif')
+		
+			h4 Change Email Address
+			p New Email Address
+			input.form-control.text-center.userInput(name='email', type='email', value='#{userEmail}')
+			
+			.alert.alert-danger.small_space_top.my_hide(style='margin-bottom: 0;') Sorry, something went wrong
+			.alert.alert-success.small_space_top.my_hide(style='margin-bottom: 0;') Change successful
+			
+			button.userButton.btn.btn-default.medium_space_top.full_width(name="email", type='button', disabled) Change Email
+		.col-sm-4
+			
+	.row
+		.col-sm-4
+		.col-sm-4.text-center.big_space_top.relative
+			.loader_wrapper
+				img(class='loader_image', src='/images/generic/loader.gif')
+			h4 Change Password
+			input.form-control.text-center.small_space_top.userInput(name="oldPassword", type='password', placeholder='Old Password')
+			input.form-control.text-center.small_space_top.userInput(name="newPassword", type='password', placeholder='New Password')
+			input.form-control.text-center.small_space_top.userInput(name="confirmPassword", type='password', placeholder='Confirm New Password')
+			
+			.alert.alert-danger.small_space_top.my_hide(style='margin-bottom: 0;') Sorry, something went wrong
+			.alert.alert-success.small_space_top.my_hide(style='margin-bottom: 0;') Change successful
+			
+			button.userButton.btn.btn-default.medium_space_top.full_width(name="password", type='button', disabled) Change Password
+			
+		.col-sm-4

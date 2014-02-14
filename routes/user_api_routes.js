@@ -32,4 +32,11 @@ module.exports = function(app) {
 			res.json(200);
 		});
 	});
+	
+	app.put('/publisher', function(req, res) {
+		if (!req.user) return res.send(400, 'Permission denied');
+		
+		console.log('### EMAIL: ' + req.body.email);
+		console.log('### OLDPASS: ' + req.body.oldPassword);
+	});
 }

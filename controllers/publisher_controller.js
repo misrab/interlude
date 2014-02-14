@@ -124,7 +124,6 @@ function login(req, res, next) {
 	async.waterfall([
 		// checks to see if user is authenticated
 		function(callback){
-			
 			passport.authenticate('local', function(err, user, info) {			
 				return callback(err, user);
 			})(req, res, callback);
@@ -160,8 +159,89 @@ function logout(req, res, next) {
   	next(null, null);
 }
 
+/*
+function modifyUserHelper(object, user, next) {
+	if (!user) {
+		var err = new Error('No user found');
+		return next(err);
+	}
+	// update
+	if (object.user_name) user.user_name = object.user_name;
+	
+	if (object.password) {	
+		user.setPassword(object.password, function(err, user) {
+			if (err) {
+				return next(err);
+			}
+			
+			user.save().success(function(){
+				return next(null, user);
+			}).error(function(err) {
+				next(err);
+			});
+		});
+	// else save right away
+	} else {
+		// save
+		user.save().success(function(){
+			return next(null, user);
+		}).error(next);
+	}
+}
+
+function modifyUser(object, next) {
+	var User = api_helper.retrieveModel("User");
+ 	User.find(object.id).success(function(user){
+ 		modifyUserHelper(object, user, next);
+ 	}).error(next);
+ */
+
+// for user to change attribute, i.e. email, password
+// expect object.userId + object.email || object.oldPassword + object.newPassword
+function changeAttribute(object, next) {
+	async.waterfall([
+		// find user/publisher
+		function(cb) {
+			Publisher.find(object.userId).success(cb).error(cb);
+		},
+		// modify
+		function(publisher, cb) {
+			if (!publisher) {
+				var err = new Error('No publisher found');
+				return cb(err);
+			}
+			
+			// change email
+			if (object.email) {
+				publisher.email = object.email;
+				publisher.save().success(function(){
+					return next(null, publisher);
+				}).error(next);
+			// change password: check then change
+			} else {
+				// check
+				/*
+				passport.authenticate('local', function(err, user, info) {
+					if (err || !user) {
+						var err = new Error('No publisher found');
+						return cb(err);
+					}
+					//return callback(err, user);
+				})(req, res, cb);
+				*/
+				// change
+				
+				// save
+			}
+		}
+	], function(err, result) {
+		// next...
+	});
+}
+
 module.exports = {
-	signup:			signup,
-	login:			login,
-	logout:			logout
+	signup:				signup,
+	login:				login,
+	logout:				logout,
+	changeAttribute:	changeAttribute
 }
