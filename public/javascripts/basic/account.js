@@ -23,7 +23,6 @@ function clickUserButton(e) {
 	var error = $(this).siblings('.alert-danger');
 	var success = $(this).siblings('.alert-success');
 	var loader = $(this).siblings('.loader_wrapper');
-	loader.show();
 	error.hide();
 	success.hide();
 	
@@ -58,6 +57,9 @@ function clickUserButton(e) {
 		if (checkFields(error, newPass.val()==confirmPass.val(),'New passwords don\'t match')==false) return false;
 		if (checkFields(error, (newPass.val()!='' && confirmPass.val()!='' && oldPass.val()!=''),'Please complete all fields')==false) return false;
 	}
+	
+	// if show too early and fail condition, won't stop showing
+	loader.show();
 
 	// PUT
 	$.ajax({
@@ -68,7 +70,7 @@ function clickUserButton(e) {
 			success.html('Change successful');
 			success.show();
 		},
-		erorr:		function() {
+		error:		function() {
 			error.html('Change unsuccessful');
 			error.show();
 		},

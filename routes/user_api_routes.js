@@ -36,7 +36,17 @@ module.exports = function(app) {
 	app.put('/publisher', function(req, res) {
 		if (!req.user) return res.send(400, 'Permission denied');
 		
-		console.log('### EMAIL: ' + req.body.email);
-		console.log('### OLDPASS: ' + req.body.oldPassword);
+		var object = {
+			userId:			req.user.id,
+			email:			req.body.email,
+			oldPassword: 	req.body.oldPassword,
+			newPassword: 	req.body.newPassword
+		};
+		publisher_controller.changeAttribute(req.user, object, function(err, result) {
+			if (err) return res.json(400, err);
+			res.json(200, result);
+		});
+		//console.log('### EMAIL: ' + req.body.email);
+		//console.log('### OLDPASS: ' + req.body.oldPassword);
 	});
 }

@@ -198,14 +198,16 @@ function modifyUser(object, next) {
 
 // for user to change attribute, i.e. email, password
 // expect object.userId + object.email || object.oldPassword + object.newPassword
-function changeAttribute(object, next) {
+function changeAttribute(user, object, next) {
 	async.waterfall([
 		// find user/publisher
 		function(cb) {
-			Publisher.find(object.userId).success(cb).error(cb);
+			Publisher.find(object.userId).success(function(pub) {
+				cb(null, pub);
+			}).error(cb);
 		},
 		// modify
-		function(publisher, cb) {
+		function(publisher, cb) {		
 			if (!publisher) {
 				var err = new Error('No publisher found');
 				return cb(err);
@@ -213,30 +215,33 @@ function changeAttribute(object, next) {
 			
 			// change email
 			if (object.email) {
+				
 				publisher.email = object.email;
 				publisher.save().success(function(){
-					return next(null, publisher);
-				}).error(next);
+					return cb(null, publisher);
+				}).error(cb);
 			// change password: check then change
 			} else {
 				// check
-				/*
-				passport.authenticate('local', function(err, user, info) {
-					if (err || !user) {
-						var err = new Error('No publisher found');
+				user.verifyPassword(object.oldPassword, function(err, answer) {
+					if (err) return cb(err);
+					if (answer==false) {
+						var err = new Error('Invalid password');
 						return cb(err);
 					}
-					//return callback(err, user);
-				})(req, res, cb);
-				*/
-				// change
+					// all ok, change password
+					publisher.setPassword(object.newPassword, function(err, publisher) {
+						if (err) return cb(err);
+						// save
+						publisher.save().success(function(){
+							return cb(null, publisher);
+						}).error(cb);
+					});		
+				});
 				
-				// save
 			}
 		}
-	], function(err, result) {
-		// next...
-	});
+	], next);
 }
 
 module.exports = {
