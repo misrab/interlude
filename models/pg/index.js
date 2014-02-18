@@ -30,7 +30,8 @@ var pg = {
 	Sequelize: 				Sequelize,
 	sequelize: 				sequelize,
 	
-	Publisher: 				sequelize.import(__dirname + '/publisher')
+	Publisher: 				sequelize.import(__dirname + '/publisher'),
+	SecretUrl:				sequelize.import(__dirname + '/secretUrl')
 }
 
 /*

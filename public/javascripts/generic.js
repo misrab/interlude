@@ -14,7 +14,8 @@ function submitLoginForm(e) {
 		error.hide();
 		
 		if (result.success) {
-			 location.reload();
+			window.location.replace("/dashboard");
+			 //location.reload();
 		} else {
 			error.html(result.message);
 			error.show();

@@ -33,13 +33,15 @@ function submitSignupForm(e) {
 	
 	$.post('/signup', data, function(result) {	
 		if (result.success) {
-			
+			window.location.replace('/account');
+			/*
 			var msg = 'Congratulations! Now simply paste the following script into your page: '
 					+ '<br><span style="color: black;">'
 					+result.code
 					+'</span>';
 			success.html(msg);
 			success.show();
+			*/
 		} else {
 			
 			danger.html(success.message);

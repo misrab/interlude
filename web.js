@@ -4,6 +4,8 @@ var express = require("express")
   	, passport = require('passport')
   	, url = require('url')
   	, db_pg = require('./models').pg;
+  	
+var SecretUrl = db_pg.SecretUrl;
 
   
 /*
@@ -87,6 +89,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
  
+ 
 /*
  *	Routes
  */
@@ -97,12 +100,23 @@ require('./routes/index.js')(app);
  *	Server listening
  */
 
-var port = process.env.PORT || 3700;
+var port = process.env.PORT || 5000;
 
 
 var clearDB = null;
 clearDB = function(next) { next(null); };
 //clearDB = function(next) { db_pg.sequelize.drop().complete(next); };
+
+// on client first message, adds secret-url combo to db if not already there
+// for use with dashboard: know secret, want urls
+function updateSecretUrlDb(secret, url) {
+	SecretUrl
+		.findOrCreate({secret: secret, url: url});
+		/*
+		.success(function(user, created) {
+			console.log('### CREATED: ' + created);
+		});*/
+}
 
 clearDB(function(err) {
 	db_pg.sequelize.sync().complete(function(err) {
@@ -121,6 +135,9 @@ clearDB(function(err) {
 			socket.on('send', function(data) {
 				var url = data.url;
 				var channel = data.channel;
+				
+				if (data.firstBool) updateSecretUrlDb(data.secret, data.url);
+				//console.log('### firstBool: ' + data.firstBool);
 				
 				// don't want to send unnecessary data
 				var newData = { message: data.message };

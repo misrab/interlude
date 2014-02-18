@@ -22,6 +22,7 @@ var interludeInternalObject = {
 	url:					'',
 	
 	userstring:				'',
+	firstBool:				true,
 	messages:				[],
 	usernames: 				['Apple','Orange','Pear','Guava','Apricot','Plum'],
 	
@@ -162,6 +163,10 @@ var interludeInternalObject = {
 			
 			// listen to anonymous
 		} else {
+			// trigger facebook
+			//$.get(interludeInternalObject.SERVER_LOCATION+'/auth/facebook');
+		
+		
 			// remove other listeners
 			interludeInternalObject.socket.removeAllListeners('message-'+interludeInternalObject.url+'-anonymous');
 			// make sure this listener on
@@ -185,20 +190,6 @@ var interludeInternalObject = {
 	},
 	
 	
-	// slave to keyupChatBoxWrite[Anonymous|Login]
-	keyupChatBoxWrite: function(e, channel) {
-		if(e.keyCode == 13) { // enter
-			var text = interludeInternalObject.chatBoxWrite.val();
-			if (!text || text==false) return;
-			
-			interludeInternalObject.socket.emit('send', { message: interludeInternalObject.userstring + text, url: interludeInternalObject.url, channel: channel, secret: interludeInternalObject.secret });
-			// clear write field
-			interludeInternalObject.chatBoxWrite.val('');
-			// scroll read field to bottom
-			interludeInternalObject.chatBoxRead.scrollTop(interludeInternalObject.chatBoxRead.prop("scrollHeight"));
-		}
-	},
-	
 	// binds except for writing, which waits for socket.io
 	bindChatbox: function() {
 		// make container draggable and resizable
@@ -215,7 +206,7 @@ var interludeInternalObject = {
 		interludeInternalObject.chatBoxTab.click(interludeInternalObject.clickChatBoxTab);
 		
 		// radio selection anonymous vs logged in
-		$('input[type="radio"][name="group1"]', interludeInternalObject.chatBoxContainer).change(interludeInternalObject.changeChatBoxRadio);
+		//$('input[type="radio"][name="group1"]', interludeInternalObject.chatBoxContainer).change(interludeInternalObject.changeChatBoxRadio);
 	},
 
 	// This adds the chatbox to the page
@@ -232,14 +223,16 @@ var interludeInternalObject = {
 		}).appendTo('#interlude-chatBox-container');
 		
 		// Add the logistics section
+		/*
 		$('<div/>', { 
 			id: 	'interlude-chatBox-logistics',
 			html:	'<input style="margin: 0 10px;" name="group1" checked value="anonymous" type="radio">Anonymous</input><input style="margin: 0 10px;" value="login" name="group1" type="radio">Login with Facebook</input>'
 		}).appendTo('#interlude-chatBox-container');
-	
+		*/
+		
 		// Add the read section
 		var readHtml =  '<span style="color: grey;">Welcome to '
-						+ '<a href="" target="_blank">Interlude</a>! Chat with other people surfing this page right now!</span>';
+						+ '<a href="'+interludeInternalObject.SERVER_LOCATION+'/about" target="_blank">Interlude</a>! Chat with other people surfing this page right now!</span>';
 		$('<div/>', { 
 			id: 	'interlude-chatBox-read',
 			html:	readHtml
@@ -262,6 +255,23 @@ var interludeInternalObject = {
 		next();
 	},
 	
+	// slave to keyupChatBoxWrite[Anonymous|Login]
+	keyupChatBoxWrite: function(e, channel) {
+		if(e.keyCode == 13) { // enter
+			var text = interludeInternalObject.chatBoxWrite.val();
+			if (!text || text==false) return;
+			
+			interludeInternalObject.socket.emit('send', { message: interludeInternalObject.userstring + text, url: interludeInternalObject.url, channel: channel, secret: interludeInternalObject.secret, firstBool: interludeInternalObject.firstBool });
+			// change firstBool if appropriate - AFTER first emit!
+			if (interludeInternalObject.firstBool) interludeInternalObject.firstBool = false;
+			
+			// clear write field
+			interludeInternalObject.chatBoxWrite.val('');
+			// scroll read field to bottom
+			interludeInternalObject.chatBoxRead.scrollTop(interludeInternalObject.chatBoxRead.prop("scrollHeight"));
+		}
+	},
+	
 	// listens for socket on given channel: 'anonymous' or 'login'
 	socketListen:	function(channel) {
 		interludeInternalObject.socket.on('message-'+interludeInternalObject.url+'-'+channel, function (data) {		
@@ -274,6 +284,9 @@ var interludeInternalObject = {
 				}
 			
 				interludeInternalObject.chatBoxRead.html(html);
+				
+				// scroll read field to bottom
+				interludeInternalObject.chatBoxRead.scrollTop(interludeInternalObject.chatBoxRead.prop("scrollHeight"));
 			} else {
 				console.log("There is a problem:", data);
 			}
@@ -313,6 +326,7 @@ var interludeInternalObject = {
 		interludeInternalObject.loadStylesSocketAndJquery(function() {
 			interludeInternalObject.insertInitialHtml(function() {
 				interludeInternalObject.initializeSocket(function() {
+					
 					if (cb) cb(); // callback from masterFunction if any
 				});
 			});

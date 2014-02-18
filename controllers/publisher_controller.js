@@ -3,8 +3,11 @@ var crypto = require('crypto');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 
-var Publisher = require('../models/index.js').pg.Publisher;
+var db_pg = require('../models/index.js').pg;
+var Publisher = db_pg.Publisher;
+var SecretUrl = db_pg.SecretUrl;
 
 /*
  * Passport serialization and local strategy
@@ -19,6 +22,29 @@ passport.use(new LocalStrategy(
   	Publisher.authenticate(username, password, done);
   }
 ));
+// Use the FacebookStrategy within Passport.
+//   Strategies in Passport require a `verify` function, which accept
+//   credentials (in this case, an accessToken, refreshToken, and Facebook
+//   profile), and invoke a callback with a user object.
+/*
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:5000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's Facebook profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Facebook account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+*/
 
 // serialize user on login
 passport.serializeUser(function(user, done) {
@@ -60,7 +86,7 @@ function signup(req, res, next) {
 			// create secret
 			var secret = crypto.randomBytes(20).toString('hex');
 			
-			console.log('###1 secret: ' + secret);
+			//console.log('###1 secret: ' + secret);
 			//var pat = /[^@]*/i;
 			//var username = pat.exec(email);
 			//username = username[0];
@@ -244,9 +270,78 @@ function changeAttribute(user, object, next) {
 	], next);
 }
 
+
+/*
+function socialCallback(fb_bool, req, res, next) {
+	var query = { where: {} };
+	if (fb_bool) {
+		query.where.facebook_id = req.body.id;
+	} else {
+		query.where.google_id = req.body.id;
+	}
+	
+	User.find(query).success(function(user) {
+		// create if none
+		if (!user) {
+			var newUser = User.build(
+			{
+				email:			req.body.email,
+				first_name: 	req.body.first_name,
+				last_name: 		req.body.last_name,
+				user_name: 		req.body.user_name,
+				gender: 		req.body.gender,
+				image_url:		req.body.image_url ? req.body.image_url : ''
+			});
+			
+			if (fb_bool) {
+				newUser.facebook_id = req.body.id;
+			} else {
+				newUser.google_id = req.body.id;
+			}
+			
+			console.log('Created user: ' + JSON.stringify(newUser));
+			
+			newUser.save().success(function(user){
+				req.login(user, function(err) {
+					if (err) return next(err);
+					return next(); //next(null, user);
+				});
+			}).error(next);
+		} else {
+			console.log('FOUND: '+ JSON.stringify(user));
+		
+			req.login(user, function(err) {
+				if (err) return next(err);
+				return next(); //next(null, user);
+			});
+		}
+	}).error(next);
+}
+*/
+
+//function facebookCallback(req, res, next) {
+//}
+
+// next(err, urls)
+// urls should be an array, even if empty
+function getPublisherUrls(secret, next) {
+	SecretUrl.findAll({ where: { secret: secret } }).success(function(objs) {
+		var urls = [];
+		async.each(objs, function(item, cb) {
+			urls.push(item.url);
+			cb();
+		}, function(err) {
+			next(err, urls);
+		});
+	}).error(next);
+}
+
 module.exports = {
 	signup:				signup,
 	login:				login,
 	logout:				logout,
-	changeAttribute:	changeAttribute
+	changeAttribute:	changeAttribute,
+	getPublisherUrls:	getPublisherUrls
+	
+	//facebookCallback:	facebookCallback
 }

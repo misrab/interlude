@@ -1,7 +1,7 @@
 /*
  *	Imports
  */
-
+var publisherController = require('../controllers/publisher_controller');
  
 
 /*
@@ -30,8 +30,17 @@ module.exports = function(app) {
 	app.delete('/*', userCheck);
 	
 	
+	app.get("/about", function(req, res) {
+		res.render("basic/about");
+	});
+	app.get("/terms", function(req, res) {
+		res.render("basic/terms");
+	});
+	
 	// Routes
-	app.get("/", function(req, res){
+	app.get("/", function(req, res) {
+		if (req.user) return res.redirect('/dashboard');
+		
    		res.render("basic/landing");
 	});
 	
@@ -44,19 +53,14 @@ module.exports = function(app) {
 	app.get("/dashboard", function(req, res){
 		if (!req.user) return res.redirect('/');
 		
-		res.send(200, 'dashboard');
+		publisherController.getPublisherUrls(req.user.secret, function(err, urls) {
+			if (err) return res.json(400, err);
+			res.render('basic/dashboard', { urls: urls });
+		});
+		
    		//res.render("basic/account");
 	});
 	
-	/*
-	= '&ltscript type="text/javascript"&gt'
-	+ 'var cb = function(o) { o.masterFunction("'+result.code+'", null); };'
-	+ 'var s, r, t; r = false; s = document.createElement("script"); s.type = "text/javascript";'
-	+ 's.src = "//localhost:5000/client/index.js"; s.onload = s.onreadystatechange = function() {'
-	+ 'if ( !r && (!this.readyState || this.readyState == "complete") ) { r = true; cb(interludeInternalObject); } };'
-	+ 'document.getElementsByTagName("head")[0].appendChild(s)'
-	+ '&lt/script&gt';
-	*/
 	app.get("/account", function(req, res){
 		if (!req.user) return res.redirect('/');
 	
@@ -64,14 +68,27 @@ module.exports = function(app) {
 		// notice embedded html like <br>
 		// and escaped tags like &lt
 		var script = '&ltscript type="text/javascript"&gt <br>'
-		+ 'var cb = function(o) { o.masterFunction("'+req.user.secret+'", null); };'
-		+ 'var s, r, t; r = false; s = document.createElement("script"); s.type = "text/javascript";'
-		+ 's.src = "//localhost:5000/client/index.js"; s.onload = s.onreadystatechange = function() {'
-		+ 'if ( !r && (!this.readyState || this.readyState == "complete") ) { r = true; cb(interludeInternalObject); } };'
-		+ 'document.getElementsByTagName("head")[0].appendChild(s)'
+		+ 'var interludeVariable_cb = function(o) { o.masterFunction("'+req.user.secret+'", null); };'
+		+ 'var interludeVariable_s, interludeVariable_r, interludeVariable_t; interludeVariable_r = false;'
+		+  'interludeVariable_s = document.createElement("script"); interludeVariable_s.type = "text/javascript";'
+		+ 'interludeVariable_s.src = "//localhost:5000/client/index.js"; interludeVariable_s.onload = interludeVariable_s.onreadystatechange = function() {'
+		+ 'if ( !interludeVariable_r && (!this.readyState || this.readyState == "complete") ) { interludeVariable_r = true; interludeVariable_cb(interludeInternalObject); } };'
+		+ 'document.getElementsByTagName("head")[0].appendChild(interludeVariable_s)'
 		+ '<br> &lt/script&gt';
 
    		res.render("basic/account", { script: script });
 	});
+	
+	
+	// callback with facebook user /me object
+	/*
+	app.post('/auth/facebook/callback', function(req, res) {
+
+		console.log('### REACHED: POST /auth/facebook/callback');
+		publisherController.facebookCallback(req, res, function(err) {
+			if (err) return res.json(400, err);
+			res.send(200, null);
+		});
+	});*/
 }
 
