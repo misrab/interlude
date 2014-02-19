@@ -1,3 +1,4 @@
+
 function clickUrl(e) {
 	e.preventDefault();
 	
@@ -34,6 +35,26 @@ function refreshMessages(newMsg) {
 	// scroll read field to bottom
 	liveChat.scrollTop(liveChat.prop("scrollHeight"));
 }
+
+function keyupChatBoxWrite(e, item, channel) {
+	if(e.keyCode == 13) { // enter
+	
+		var textarea = $(item);
+	
+		var text = textarea.val();
+		if (!text || text==false) return;
+	
+		var message = '<span style="background-color: yellow; font-size: 1em; font-weight: bold;">Official representative: ' + text + '</span>';
+		// no secret, firstBool set to false
+		socket.emit('send', { message: message, url: $('#activeUrl').val(), channel: channel, firstBool: false });
+	
+		// clear write field
+		textarea.val('');
+		// scroll read field to bottom
+		textarea.scrollTop(textarea.prop("scrollHeight"));
+	}
+}
+
 function socketListen(url, channel) {
 	if (!url || !channel || url=='' || channel=='') {
 		console.log('Error listening on socket given url and channel');
@@ -57,4 +78,7 @@ $(function() {
 	
 	socket = io.connect(SERVER_LOCATION);
 	socketListen($('#activeUrl').val(), 'anonymous');
+	
+	// writing
+	$('#liveWrite').keyup(function(e) { keyupChatBoxWrite(e, this, 'anonymous'); });
 });

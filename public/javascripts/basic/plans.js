@@ -31,14 +31,14 @@ function submitSignupForm(e) {
 	data.password = $('[name="password"]', form).val();
 	data.plan = $('[name="plan"]', form).val();
 	
+	
+	
 	$.post('/signup', data, function(result) {	
 		if (result.success) {
+			// enterprise not yet valid
 			window.location.replace('/account');
 			/*
-			var msg = 'Congratulations! Now simply paste the following script into your page: '
-					+ '<br><span style="color: black;">'
-					+result.code
-					+'</span>';
+			var msg = 'Congratulations! Now simply paste the following script into your page: ';
 			success.html(msg);
 			success.show();
 			*/

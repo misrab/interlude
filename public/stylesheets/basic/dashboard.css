@@ -21,3 +21,8 @@
   outline: 1px solid #808080;
   height: 400px;
 }
+#liveWrite {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+}

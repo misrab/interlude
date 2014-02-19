@@ -13,6 +13,7 @@ function userCheck(req, res, next) {
 	res.locals.userBool = req.user ? true : false;
 	res.locals.userId = req.user ? req.user.id : null;
 	res.locals.userEmail = req.user ? req.user.email : null;
+	res.locals.userPlan = req.user ? req.user.plan : null;
 	
 	//console.log('### LALA: ' + res.locals.user_bool);
 	next();

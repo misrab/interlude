@@ -12,6 +12,12 @@ block content
 		.col-sm-12.text-center
 			h3 Account
 			
+			if userPlan=='2'
+				.alert.alert-warning
+					| Analytics are not yet implemented. Please enjoy all other features on us for free :) 
+					br
+					| We will let you know by email as soon as they are available.
+			
 			a#toggleScript.pull-right(href='#', style='margin-right: 5px;') Hide
 			#script.alert.alert-success
 				h4 Insert the following script into your page(s) for instant chat for your users:
