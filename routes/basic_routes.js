@@ -72,7 +72,7 @@ module.exports = function(app) {
 		+ 'var interludeVariable_cb = function(o) { o.masterFunction("'+req.user.secret+'", null); };'
 		+ 'var interludeVariable_s, interludeVariable_r, interludeVariable_t; interludeVariable_r = false;'
 		+  'interludeVariable_s = document.createElement("script"); interludeVariable_s.type = "text/javascript";'
-		+ 'interludeVariable_s.src = "//localhost:5000/client/index.js"; interludeVariable_s.onload = interludeVariable_s.onreadystatechange = function() {'
+		+ 'interludeVariable_s.src = "//interlude.im/client/index.js"; interludeVariable_s.onload = interludeVariable_s.onreadystatechange = function() {'
 		+ 'if ( !interludeVariable_r && (!this.readyState || this.readyState == "complete") ) { interludeVariable_r = true; interludeVariable_cb(interludeInternalObject); } };'
 		+ 'document.getElementsByTagName("head")[0].appendChild(interludeVariable_s)'
 		+ '<br> &lt/script&gt';
