@@ -126,6 +126,14 @@ clearDB(function(err) {
 		var io = require('socket.io').listen(app.listen(port));
 		io.set('log level', 1); // reduce logging
 		
+		
+		// Heroku allow websockets
+		io.configure(function () { 
+		  io.set("transports", ["xhr-polling"]); 
+		  io.set("polling duration", 10); 
+		});
+		
+		
 		console.log("### Listening on port " + port);
 		console.log('### Environment is: ' + process.env.NODE_ENV);
 		
