@@ -22,7 +22,8 @@ function clickUrl(e) {
 	$('#liveWrite').keyup(keyupLiveWrite);
 }
 
-var SERVER_LOCATION = "//localhost:5000";
+//var SERVER_LOCATION = "//localhost:5000";
+var SERVER_LOCATION = "//afternoon-reaches-1117.herokuapp.com";
 var socket;
 var messages = [];
 
