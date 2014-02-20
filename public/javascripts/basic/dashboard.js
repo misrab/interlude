@@ -16,6 +16,10 @@ function clickUrl(e) {
 	
 	// show relevant chat
 	socketListen($('#activeUrl').val(), 'anonymous');
+	
+	// rebind writing
+	$('#liveWrite').unbind('keyup');
+	$('#liveWrite').keyup(keyupLiveWrite);
 }
 
 var SERVER_LOCATION = "//localhost:5000";
@@ -36,14 +40,17 @@ function refreshMessages(newMsg) {
 	liveChat.scrollTop(liveChat.prop("scrollHeight"));
 }
 
-function keyupChatBoxWrite(e, item, channel) {
+function keyupLiveWrite(e) {
+	e.preventDefault();
+	var channel = 'anonymous';
+	
 	if(e.keyCode == 13) { // enter
 	
-		var textarea = $(item);
+		var textarea = $(this);
 	
 		var text = textarea.val();
 		if (!text || text==false) return;
-	
+				
 		var message = '<span style="background-color: yellow; font-size: 1em; font-weight: bold;">Official representative: ' + text + '</span>';
 		// no secret, firstBool set to false
 		socket.emit('send', { message: message, url: $('#activeUrl').val(), channel: channel, firstBool: false });
@@ -80,5 +87,5 @@ $(function() {
 	socketListen($('#activeUrl').val(), 'anonymous');
 	
 	// writing
-	$('#liveWrite').keyup(function(e) { keyupChatBoxWrite(e, this, 'anonymous'); });
+	$('#liveWrite').keyup(keyupLiveWrite);
 });
