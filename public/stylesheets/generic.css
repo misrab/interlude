@@ -121,6 +121,12 @@ body {
 .font2 {
   font-size: 2em;
 }
+.bold {
+  font-weight: bold;
+}
+.italic {
+  font-style: italic;
+}
 .inline_circle {
   text-align: center;
   padding: 0.5em 0;

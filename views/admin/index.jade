@@ -1,0 +1,20 @@
+extends ../shared/generic_layout
+
+block javascripts
+	//- script(type='text/javascript', src='/javascripts/basic/dashboard.js')
+	//- script(type='text/javascript', src='/socket.io/socket.io.js')
+
+block stylesheets
+	//- link(rel='stylesheet', href='/stylesheets/basic/dashboard.css')
+
+block content
+	if publishers.length
+		.row.text-center
+			.col-sm-4.bold.font1-25 Email
+			.col-sm-4.bold.font1-25 Plan
+			.col-sm-4.bold.font1-25 Day started
+		.row.text-center
+			each pub in publishers
+				.col-sm-4 #{pub.email}
+				.col-sm-4 #{pub.plan}
+				.col-sm-4 #{pub.createdAt}

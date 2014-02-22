@@ -336,10 +336,19 @@ function getPublisherUrls(secret, next) {
 	}).error(next);
 }
 
+// next(err, publishers)
+function getAllPublishers(next) {
+	Publisher.findAll().success(function(results) {
+		next(null, results);
+	}).error(next);
+}
+
 module.exports = {
 	signup:				signup,
 	login:				login,
 	logout:				logout,
+	
+	getAllPublishers:	getAllPublishers,
 	changeAttribute:	changeAttribute,
 	getPublisherUrls:	getPublisherUrls
 	

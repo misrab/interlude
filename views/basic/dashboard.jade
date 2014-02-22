@@ -30,4 +30,5 @@ block content
 		.col-sm-9
 			#liveChat
 			
-			textarea#liveWrite(placeholder='Respond here with priority...')
+			if userPlan!='0'
+				textarea#liveWrite(placeholder='Respond here with priority...')
