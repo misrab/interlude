@@ -58,6 +58,7 @@ $(function() {
 	$('#signupForm').submit(submitSignupForm);
 
 	// select plan
+	/*
 	$('.plan').click(function(e) {
 		e.preventDefault();
 		$('.plan').removeClass('active');
@@ -67,6 +68,6 @@ $(function() {
 		var signupHidden = $('[name="plan"]', $('#signupForm'));
 		var planTitle = $('.planTitle', $(this)).html().toLowerCase();
 		var value = switchValue(planTitle);
-		signupHidden.val(value);
+		signupHidden.val(value);*/
 	});
 });

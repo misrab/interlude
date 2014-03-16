@@ -34,6 +34,7 @@ module.exports = function(app) {
 	app.get("/about", function(req, res) {
 		res.render("basic/about");
 	});
+	
 	app.get("/terms", function(req, res) {
 		res.render("basic/terms");
 	});
@@ -45,11 +46,13 @@ module.exports = function(app) {
    		res.render("basic/landing");
 	});
 	
+	/*
 	app.get("/plans", function(req, res){
 		if (req.user) return res.redirect('/dashboard');
 	
    		res.render("basic/plans");
 	});
+	*/
 	
 	app.get("/dashboard", function(req, res){
 		if (!req.user) return res.redirect('/');
