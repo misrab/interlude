@@ -46,13 +46,13 @@ module.exports = function(app) {
    		res.render("basic/landing");
 	});
 	
-	/*
+	
 	app.get("/plans", function(req, res){
 		if (req.user) return res.redirect('/dashboard');
 	
    		res.render("basic/plans");
 	});
-	*/
+	
 	
 	app.get("/dashboard", function(req, res){
 		if (!req.user) return res.redirect('/');
