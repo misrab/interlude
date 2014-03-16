@@ -7,7 +7,7 @@ var interludeInternalObject = {
 	 *	 Internal Variables
 	 */
 	//SERVER_LOCATION:		"//afternoon-reaches-1117.herokuapp.com",
-	SERVER_LOCATION: 		"//localhost:5000",
+	SERVER_LOCATION: 		"//interlude.im",
 	TAB_POSITION: 			"tabTop",
 	
 	// These are set in the function 'insertInitialHtml'
