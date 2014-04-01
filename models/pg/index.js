@@ -7,7 +7,7 @@ if (process.env.NODE_ENV=='production') {
 	pg_url = process.env.HEROKU_POSTGRESQL_AQUA_URL;
 } 
 else if (process.env.NODE_ENV=='staging')  {	
-	pg_url = process.env.HEROKU_POSTGRESQL_NAVY_URL;
+	pg_url = process.env.HEROKU_POSTGRESQL_ROSE_URL;
 }
 else if (process.env.NODE_ENV=='development') {
 	pg_url = process.env.POSTGRESQL_LOCAL_URL;
